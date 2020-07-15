@@ -1,6 +1,6 @@
 # Telegram Youtube Notifier
-A simple, memory-based cache that notifies Telegram groups when a new
-youtube video has been posted to a channel.
+A simple, Telegram bot that notify groups when a new
+youtube video has been posted to a channel using a memory-based cache.
 
 ## Usage
 
