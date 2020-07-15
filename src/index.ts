@@ -27,6 +27,7 @@ export interface Notifier {
 
 const notifier: Notifier = ({ telegramToken, telegramChatIds, youtubeChannelId, message }) => {
   const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`
+  console.log(`Monitoring feed ${feedUrl}`)
   const bot = new Telegraf(telegramToken)
 
   fetchVideosFromFeed(feedUrl)
