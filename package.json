@@ -10,7 +10,7 @@
     "telegraf": "^3.38.0"
   },
   "scripts": {
-    "prepublish": "tsc",
+    "prepare": "tsc",
     "build": "tsc"
   },
   "devDependencies": {
