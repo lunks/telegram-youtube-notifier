@@ -1,23 +1,19 @@
 import Telegraf from 'telegraf'
 import { processNewVideos, fetchVideosFromFeed, Video } from './processNewVideos'
+import { TelegrafContext } from 'telegraf/typings/context'
 
 let cachedVideos: Video[] = []
 
-process.env.NTBA_FIX_319 = '1'
-const feedUrl = process.env.YOUTUBE_FEED_URL as string
-const TOKEN = process.env.TELEGRAM_NOTIFIER_TOKEN as string
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID as string
-const NOTIFIER_MESSAGE = process.env.TELEGRAM_NOTIFIER_MESSAGE
-const bot = new Telegraf(TOKEN)
-
-const postNewVideo = (video: Video) => {
-  const message = `${NOTIFIER_MESSAGE} ${video.url}`
-  bot.telegram
-    .sendMessage(CHAT_ID, message)
-    .then(() => {
-      console.log(message)
-    })
-    .catch(console.error)
+const postNewVideo = (bot: Telegraf<TelegrafContext>, chatIds: string, message: string) => (video: Video) => {
+  const messageToPost = `${message} ${video.url}`
+  chatIds.split(',').forEach((chatId) => {
+    bot.telegram
+      .sendMessage(chatId, messageToPost)
+      .then(() => {
+        console.log(messageToPost)
+      })
+      .catch(console.error)
+  })
 }
 
 const saveVideos = (newVideos: Video[]) => {
@@ -25,15 +21,26 @@ const saveVideos = (newVideos: Video[]) => {
   return cachedVideos
 }
 
-fetchVideosFromFeed(feedUrl)
-  .then(saveVideos)
-  .then((videosFromFeed) => {
-    console.log(`Cache loaded with ${videosFromFeed.length} videos.`)
-    console.log('Starting...')
+export interface Notifier {
+  (options: { telegramToken: string; telegramChatIds: string; youtubeChannelId: string; message: string }): void
+}
 
-    setInterval(() => {
-      fetchVideosFromFeed(feedUrl).then((videosFromFeed) => {
-        processNewVideos(postNewVideo, videosFromFeed, cachedVideos).then(saveVideos)
-      })
-    }, 1 * 60 * 1000)
-  })
+const notifier: Notifier = ({ telegramToken, telegramChatIds, youtubeChannelId, message }) => {
+  const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${youtubeChannelId}`
+  const bot = new Telegraf(telegramToken)
+
+  fetchVideosFromFeed(feedUrl)
+    .then(saveVideos)
+    .then((videosFromFeed) => {
+      console.log(`Cache loaded with ${videosFromFeed.length} videos.`)
+      console.log('Starting...')
+
+      setInterval(() => {
+        fetchVideosFromFeed(feedUrl).then((videosFromFeed) => {
+          processNewVideos(postNewVideo(bot, telegramChatIds, message), videosFromFeed, cachedVideos).then(saveVideos)
+        })
+      }, 1 * 60 * 1000)
+    })
+}
+
+export default notifier

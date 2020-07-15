@@ -3,12 +3,17 @@
     "target": "es2018",
     "module": "commonjs",
     "lib": ["es2018"],
-    "outDir": "./build",
+    "outDir": "build",
     "strict": true,
+    "declaration": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": false,
     "forceConsistentCasingInFileNames": true,
     "typeRoots": ["./node_modules/@types", "./src/typings"]
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
 }
