@@ -41,6 +41,7 @@ const notifier: Notifier = ({ telegramToken, telegramChatIds, youtubeChannelId, 
         })
       }, 1 * 60 * 1000)
     })
+    .catch(console.error)
 }
 
 export default notifier
