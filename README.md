@@ -5,7 +5,7 @@ youtube video has been posted to a channel.
 ## Usage
 
 ```javascript
-const telegramYoutubeNotifer = require('telegram-youtube-notifier')
+const telegramYoutubeNotifer = require('telegram-youtube-notifier').default
 
 // Setup your Telegram Bot token
 const telegramToken = token
