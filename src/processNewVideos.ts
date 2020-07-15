@@ -12,7 +12,8 @@ const feedItemToVideo = (item: FeedParser.Item): Video => ({ url: item.link })
 
 export const fetchVideosFromFeed = (feedUrl: string): Promise<Video[]> => {
   return new Promise((resolve, reject) => {
-    return parseFeed(feedUrl, 30, (err, { items }) => {
+    return parseFeed(feedUrl, 30, (err, feed) => {
+      const items = feed?.items || []
       if (err) {
         reject(err)
       }
