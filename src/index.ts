@@ -7,12 +7,7 @@ let cachedVideos: Video[] = []
 const postNewVideo = (bot: Telegraf<TelegrafContext>, chatIds: string, message: string) => (video: Video) => {
   const messageToPost = `${message} ${video.url}`
   chatIds.split(',').forEach((chatId) => {
-    bot.telegram
-      .sendMessage(chatId, messageToPost)
-      .then(() => {
-        console.log(messageToPost)
-      })
-      .catch(console.error)
+    bot.telegram.sendMessage(chatId, messageToPost).then(console.log).catch(console.error)
   })
 }
 
